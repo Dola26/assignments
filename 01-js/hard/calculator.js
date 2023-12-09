@@ -16,6 +16,78 @@
   Once you've implemented the logic, test your code by running
 */
 
-class Calculator {}
+class Calculator {
+    constructor() {
+      this.result = 0;
+    }
+  
+    add(value) {
+      this.result += value;
+    }
+  
+    subtract(value) {
+      this.result -= value;
+    }
+  
+    multiply(value) {
+      this.result *= value;
+    }
+  
+    divide(value) {
+      if (value === 0) {
+        throw new Error('Division by zero is not allowed.');
+      }
+      this.result /= value;
+    }
+  
+    clear() {
+      this.result = 0;
+    }
+  
+    getResult() {
+      return this.result;
+    }
+  
+    calculate(expression) {
+      // Remove multiple continuous spaces from the expression
+      expression = expression.replace(/\s+/g, '');
+  
+      // Check for invalid characters
+      if (!/^[0-9+\-*/().\s]+$/.test(expression)) {
+        throw new Error('Invalid characters in the expression.');
+      }
+  
+      // Check for invalid parentheses
 
-module.exports = Calculator;
+      const openParenthesesCount = (expression.match(/\(/g) || []).length;
+      const closeParenthesesCount = (expression.match(/\)/g) || []).length;
+      if (openParenthesesCount !== closeParenthesesCount) {
+        throw new Error('Invalid parentheses in the expression.');
+      }
+  
+      // Evaluate the expression
+      try {
+        this.result = eval(expression);
+  
+        if (!isFinite(this.result)) {
+          throw new Error('Result is not a finite number.');
+        }
+      } catch (error) {
+        throw new Error('Error evaluating the expression.');
+      }
+    }
+  }
+  
+  module.exports = Calculator;
+  
+
+// Example usage:
+
+
+
+   
+
+
+
+
+

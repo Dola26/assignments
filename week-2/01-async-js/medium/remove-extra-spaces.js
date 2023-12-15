@@ -10,7 +10,7 @@ fs.readFile(path, 'utf-8', (err, data) => {
     }
 
     // Replace spaces in the content
-    const modifiedContent = data.replace(/\s/g, '');
+    const modifiedContent = data.replace(/\s+/g, ' ');
 
     // Write the modified content back to the file
     fs.writeFile(path, modifiedContent, 'utf-8', (writeErr) => {

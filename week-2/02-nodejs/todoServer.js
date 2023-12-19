@@ -39,11 +39,126 @@
 
   Testing the server - run `npm run test-todoServer` command in terminal
  */
-  const express = require('express');
-  const bodyParser = require('body-parser');
-  
-  const app = express();
-  
-  app.use(bodyParser.json());
-  
-  module.exports = app;
+const express = require("express");
+const bodyParser = require("body-parser");
+const fs = require("fs");
+
+const app = express();
+
+app.use(bodyParser.json());
+
+function findIndex(todos,i){
+
+  for(let j =0;j<todos.length;j++){
+    if(todos[j].id===i  )
+    return j;
+  }
+  return -1;
+
+}
+
+
+function changeIndex(todos,i,title,description){
+  for(let j =0;j<todos.length;j++){
+    if(todos[j].id===i  ){
+    todos[j].title=title;
+    todos[j].description=description;
+    return j
+    }
+  }
+}
+function deleteIndex(todos,i){
+  for(let j =0;j<todos.length;j++){
+    if(todos[j].id===i  ){
+    todos.splice(j,1)
+    return todos
+    }
+  }
+}
+app.get("/todo", (req, res) => {
+  fs.readFile("todos.json", "utf-8", (err, data) => {
+    if (err) {
+      throw err;
+    }
+    res.json(JSON.parse(data));
+  });
+});
+
+app.get("/todos/:fileIndex",(req,res)=>{
+  fs.readFile("todos.json","utf-8",(err,data)=>{
+    if (err) {
+      return res.status(500).json({ error: "Failed to read the todos file" });
+    }
+    const fileindex=req.params.fileIndex;
+    const todos = JSON.parse(data);
+    const requiredTodo=findIndex(todos,parseInt(fileindex)); 
+
+    if(requiredTodo === -1){
+      res.status(404).json({error:"todo not found"});
+    }
+    else{
+
+    res.json(todos[requiredTodo]);
+    }
+
+  })
+})
+
+
+
+app.post("/todos", (req, res) => {
+  const newTodo = {
+    id: Math.floor(Math.random() * 10000),
+    title: req.body.title,
+    description:req.body.description
+
+  };
+
+  fs.readFile("todos.json", "utf-8", (err, data) => {
+    if (err) throw err;
+    let todos = JSON.parse(data);
+    todos.push(newTodo);
+
+    fs.writeFile("todos.json", JSON.stringify(todos), (err) => {
+      if (err) throw err;
+
+      res.status(201).json(newTodo);
+    });
+  });
+});
+
+app.put("/todos/:fileIndex",(req,res)=>{
+  const fileIndex=req.params.fileIndex;
+  fs.readFile("todos.json","utf-8",(err,data)=>{
+    if(err) throw err;
+    const todos=JSON.parse(data);
+    const changedTodo=changeIndex(todos,parseInt(fileIndex),req.body.title,req.body.description);
+
+    fs.writeFile("todos.json",JSON.stringify(todos),(err)=>{
+      if(err) throw err;
+      res.json(todos[changedTodo])
+    })
+
+  })
+})
+
+app.delete("/todos/:fileIndex",(req,res)=>{
+  const fileIndex=req.params.fileIndex;
+  fs.readFile("todos.json","utf-8",(err,data)=>{
+    if(err) throw err;
+    const todos=JSON.parse(data);
+    const changedTodo=deleteIndex(todos,parseInt(fileIndex));
+
+    fs.writeFile("todos.json",JSON.stringify(changedTodo),(err)=>{
+      if(err) throw err;
+      res.json(changedTodo)
+    })
+
+  })
+
+})
+
+app.listen(3000)
+
+module.exports = app;
+

@@ -95,7 +95,7 @@ describe('API Endpoints', () => {
       const response = await sendRequest(options);
 
       expect(response.statusCode).toBe(404);
-      expect(response.body).toBe("Route not found");
+      expect(response.body).toBe("File not found");
     });
   });
 });

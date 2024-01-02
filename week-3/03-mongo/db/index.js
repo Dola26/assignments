@@ -1,19 +1,23 @@
 const mongoose = require('mongoose');
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://dola:nnCy5ynjg30lhZqS@cluster0.0y0cpl7.mongodb.net/');
+mongoose.connect('mongodb+srv://dola:nnCy5ynjg30lhZqS@cluster0.0y0cpl7.mongodb.net/udemy    ');
 
 // Define schemas
 const AdminSchema = new mongoose.Schema({
     // Schema definition here
-    userName: String,
+    username: String,
     password: String
 });
 
 const UserSchema = new mongoose.Schema({
     // Schema definition here
-    userName: String,
-    password: String
+    username: String,
+    password: String,
+    purchasedCourses:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Course"
+    }]
 });
 
 const CourseSchema = new mongoose.Schema({

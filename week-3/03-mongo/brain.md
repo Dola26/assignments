@@ -1,0 +1,1 @@
+-first we have to create the schema in index.js file .
